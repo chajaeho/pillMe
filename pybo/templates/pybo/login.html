@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="loginOutBox">
+    <div class="loginInBox">
+        <div class="box">
+            <form method="post">
+                {% csrf_token %}
+                <div class="login">
+                    <label for="userID">사용자ID</label>
+                    <input type="text" class="form-control" name="userID" id="userID">
+                </div>
+                <div class="login">
+                    <label for="userPW">비밀번호</label>
+                    <input type="password" class="form-control" name="userPW" id="userPW">
+                </div>
+                <button type="submit" class="btn btn-primary">로그인</button>
+            </form>
+            <a href="/pybo/signup">회원가입</a>
+        </div>  
+    </div>
+</div>
+{% endblock %}
