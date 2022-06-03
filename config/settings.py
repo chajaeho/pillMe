@@ -25,9 +25,11 @@ SECRET_KEY = my_settings.SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
-
+SMS_ACCESS_KEY = my_settings.SMS_ACCESS_KEY
+SMS_SECRET_KEY = my_settings.SMS_SECRET_KEY
+SMS_SERVICE_ID = my_settings.SMS_SERVICE_ID
 # Application definition
 
 INSTALLED_APPS = [
@@ -67,6 +69,10 @@ TEMPLATES = [
         },
     },
 ]
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.core.context_processors.request',
+)
 
 WSGI_APPLICATION = 'config.wsgi.application'
 

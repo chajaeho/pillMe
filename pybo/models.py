@@ -1,5 +1,3 @@
-from django.db import models
-
 # Create your models here.
 from django.db import models
 # Create your models here.
@@ -32,7 +30,7 @@ class PillList(models.Model):
     PillEat = models.CharField(max_length=45, null=False)
 
     class Meta:
-        db_table: 'PillList'
+        db_table = 'PillList'
 
 class PillTake(models.Model):
     idPillTake = models.AutoField(null=False, primary_key=True)
@@ -40,7 +38,7 @@ class PillTake(models.Model):
     PillTakeTime = models.CharField(max_length=45, null=False)
 
     class Meta:
-        db_table: 'PillTake'
+        db_table= 'PillTake'
 
 class PillTime(models.Model):
     idPillTime = models.AutoField(null=False, primary_key=True)
@@ -50,4 +48,4 @@ class PillTime(models.Model):
     EatTime = models.CharField(max_length=45, null=False)
 
     class Meta:
-        db_table: 'PillTime'
+        db_table= 'PillTime'

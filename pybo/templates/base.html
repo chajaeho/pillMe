@@ -12,9 +12,9 @@
     <nav id="nav2">
         <a href="/pybo/"><h2>pillMe</h2></a>
         <ul>
-            <li><a href="#">약알림</a></li>
-            {% if user.is_authenticated %}
-            <li><a href="{% url 'logout' %}">{{ user.userName }} (로그아웃)</a></li>
+            <li><a href="#" style = "color:#ff7474f6; font-size:30px; font-weight:bold;">약알림</a></li>
+            {% if request.session.user %}
+            <li><a href="{% url 'logout' %}"> {{ request.session.user }} (로그아웃)</a></li>
             {% else %}
             <li><a href="/pybo/login">로그인</a></li>
             {% endif %}

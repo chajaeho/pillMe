@@ -6,6 +6,8 @@
             <form method="post">
                 {% csrf_token %}
                 <div class="login">
+                    <strong>{{error}}</strong>
+                    <br>
                     <label for="userID">사용자ID</label>
                     <input type="text" class="form-control" name="userID" id="userID">
                 </div>
@@ -16,6 +18,7 @@
                 <button type="submit" class="btn btn-primary">로그인</button>
             </form>
             <a href="/pybo/signup">회원가입</a>
+            <a href="/pybo/find">비밀번호찾기</a>
         </div>  
     </div>
 </div>

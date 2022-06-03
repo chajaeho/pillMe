@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 
-{% if user.is_authenticated %}
+{% if request.session.user %}
 <div class="loginOutBox">
     <div class="loginInBox">
         <div class="middleBox">

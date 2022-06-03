@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+<script>
+    function handleOnChange(e) {
+        const value = e.value;
+
+        for (i=0; i< value; i++) {
+            document.getElementById('result').innerText=value;
+        }
+    }
+</script>
+<div class="loginOutBox">
+    <div class="loginInBox">
+        <div class="middleBox">
+            <form method="post" action="{% url 'addpillList' %}">
+                {% csrf_token %}
+                <h3 style = "color:#fffffff6; font-size:30px; font-weight:bold; ">모듈 번호</h3>
+                <input type="text" id="ModuleNum" name="ModuleNum" value="{{ModuleNum}}" placeholder="모듈 번호를 입력하세요."style="width:400px; height:50px; text-align:center; margin:20px">
+                <h3 style = "color:#fffffff6; font-size:30px; font-weight:bold;">별칭 이름</h3>
+                <input type="text" id="search_kw" name="PillName" value="{{PillName}}" placeholder="별칭을 입력하세요." style="width:400px; height:50px; text-align:center; margin:20px">
+                <br>
+                <select>
+                    <option>매일</option>
+                    <option></option>
+                </select>
+                <select name="PillTime">
+                    <option id="PillTime" name="PillTime" value="1">1</option>
+                    <option id="PillTime" name="PillTime" value="2">2</option>
+                    <option id="PillTime" name="PillTime" value="3">3</option>
+                </select>
+                <select name="PillEat">
+                    <option id="PillEat" name="before" value="before">before</option>
+                    <option id="PillEat" name="after" value="after">after</option>
+                </select>
+                <input type="time" name="EatTime" value = "{{EatTime}}">
+                <button type="submit">추가</button>
+            </form> 
+        </div>
+    </div>
+</div>
+{% endblock %}}
