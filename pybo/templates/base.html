@@ -10,11 +10,11 @@
 </head>
 <body>
     <nav id="nav2">
-        <a href="/pybo/"><h2>pillMe</h2></a>
+        <a href="/pybo/"><h2 style= "font-size: 120px; font-weight:bold;">PillMe</h2></a>
         <ul>
             <li><a href="#" style = "color:#ff7474f6; font-size:30px; font-weight:bold;">약알림</a></li>
             {% if request.session.user %}
-            <li><a href="{% url 'logout' %}"> {{ request.session.user }} (로그아웃)</a></li>
+            <li><img src = "/static/logout.png" align="middle" width="100"; alt="아이콘" > </img> <a href="{% url 'logout' %}" style = "font-size: 30px; font-weight:bold;"> {{ user.userNAME }} (로그아웃)</a></li>
             {% else %}
             <li><a href="/pybo/login">로그인</a></li>
             {% endif %}

@@ -26,12 +26,11 @@
      <button type="botton" onclick="location.href='/pybo/addpill'">+</button>
     </body>
 {% if not pilllist %}
-<h4> 등록된 약이 없습니다. </h4>
+<h4 style = "font-size:30px; font-weight:bold;"> 등록된 약이 없습니다. </h4>
 {% else %}
-<h1> {{request.session.user}}님의 약 목록</h1>
+<h1> {{user.userNAME}}님의 약 목록</h1>
 {% for pill in pilllist.all %}
    <h1> <input type="image" src="/static/pillicon.png" alt="약아이콘"> {{ pill.PillName }}</h1>
 {% endfor %}
 {% endif %}
 {% endblock %}
-

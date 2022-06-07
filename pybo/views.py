@@ -11,11 +11,19 @@ import hmac
 import base64
 import time, json
 from .sendSMS import SendSMS
+from django.db.models import F
 
 # Create your views here.
 
 def index(request):
-    return render(request, 'pybo/main.html')
+    user_id = request.session.get('user')
+
+    if user_id:
+        user = UserMember.objects.get(userID=user_id)
+        return render(request, 'pybo/main.html', {'user' : user})
+    else:
+        return render(request, 'pybo/main.html') 
+    
 
 def login_user(request):
     response_data = {}
@@ -33,13 +41,11 @@ def login_user(request):
             user = UserMember.objects.get(userID=login_userID)
             if (login_userPW ==user.userPW):
                 request.session['user'] = user.userID
-                return render(request, 'pybo/main.html')
+                return redirect('/pybo')
             else:
                 response_data['error'] = "비밀번호가 틀립니다."
                 return render(request, 'pybo/login.html', response_data)
             
-    return render(request, 'pybo/login.html', response_data)
-
 def logout(request):
     request.session.pop('user')
     return redirect('/pybo')
@@ -70,19 +76,25 @@ def main(request):
 
     if user_id:
         user = UserMember.objects.get(userID=user_id)
-        return render(request, 'pybo/main.html', user)
+        return render(request, 'pybo/main.html', {'user' : user})
     else:
         return render(request, 'pybo/main.html') 
 
 
-def friend(request):
-    friendlist = Friend.objects.all()
-
+def friend(request):    
     q = request.session.get('user')
-
+    Friends = Friend.objects.all()
     if q:
-        friendlist = friendlist.filter(FriendMaster__icontains=q)
-        return render(request, 'pybo/friend.html', {'friendlist': friendlist})
+        user = UserMember.objects.get(userID=q)
+        friendlist = Friends.filter(FriendMaster__icontains=q)
+        return render(request, 'pybo/friend.html', {'friendlist': friendlist, 'user': user})
+
+def deleteFriend(request, friendID):
+     FriendMaster = request.session.get('user')
+     friendID= friendID
+     friend = Friend.objects.get(FriendMaster=FriendMaster, FriendID=friendID)
+     friend.delete()
+     return redirect('/pybo/friend')
 
 def search(request):
     users = UserMember.objects.all()
@@ -94,13 +106,14 @@ def search(request):
         friend = users.get(userID=q)        
         friends = Friend()
         friends.FriendMaster = request.session.get('user')
-        friends.FriendID= q
+        friends.FriendID=friend.userID
         friends.save()
 
         userId = request.session.get('user')
         friendlist = Friend.objects.all()
         friendlist = friendlist.filter(FriendMaster__icontains=userId)
-        return render(request, 'pybo/friend.html', {'friendlist' : friendlist})
+      #  return render(request, 'pybo/friend.html', {'friendlist' : friendlist})
+        return redirect('/pybo/friend')
     else:
         userId = request.user.userId
         friendlist = Friend.objects.all()
@@ -111,11 +124,10 @@ def search(request):
 def friendpill(request, username):
    # pilllist = PillList.objects.all()
     pillList = PillList.objects.filter(PillMaster__icontains=username)
-    userName = {
-        'userName': username,
-    }
+    user = UserMember.objects.get(userID__icontains=username)
+
     if pillList:
-        return render(request, 'pybo/friendpill.html', {'userName' : userName, 'pillList': pillList})
+        return render(request, 'pybo/friendpill.html', {'user' : user, 'pillList': pillList})
     else:
         return render(request, 'pybo/friendpill.html')
 
@@ -125,9 +137,10 @@ def mypill(request):
     pilllist = PillList.objects.all()
     
     q = request.session.get('user')
-    if q:
+    if q:            
+        user = UserMember.objects.get(userID = q)
         pilllist = pilllist.filter(PillMaster__icontains=q)        
-        return render(request, 'pybo/mypill.html', {'pilllist': pilllist})
+        return render(request, 'pybo/mypill.html', {'pilllist': pilllist, 'user': user})
 
 
 def addpill(request):        

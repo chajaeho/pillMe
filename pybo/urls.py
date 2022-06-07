@@ -15,5 +15,6 @@ urlpatterns = [
     path('addpill/', views.addpill, name="addpill"),
     path('addpillList/', views.addpillList, name='addpillList'),
     path('find/', views.find, name='find'),
-    path('findPassword/', views.findPassword, name='findPassword')
+    path('findPassword/', views.findPassword, name='findPassword'),
+    path('friend/<str:friendID>/delete', views.deleteFriend, name='deleteFriend'),
 ]

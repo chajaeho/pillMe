@@ -13,7 +13,7 @@
             {% if not friendlist %}
                 <h4> 친구가 없습니다. </h4>
             {% else %}
-                <h1> {{request.session.user}}님의 친구 목록</h1>
+                <h1> {{user.userNAME}}님의 친구 목록</h1>
                 {% for friend in friendlist.all %}
                     <a href="{{friend.FriendID}}">
                         <input type="image" src="/static/image1.jpg" alt="프로필사진">
@@ -24,6 +24,5 @@
         </div>
     </div>
 </div>
-
 <br>
 {% endblock %}

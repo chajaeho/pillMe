@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
+<h4> {{user.userNAME}}님</h4>
+<a href="delete">삭제</a>
 {% if not pillList %}
-<h4> {{userName.userName}}</h4>
 <h4> 약이 없습니다. </h4>
 {% else %}
-{%for pill in pillList.all %}
-<h1> {{userName.userName}}님의 약 목록</h1>
+{% for pill in pillList.all %}
+<h1> {{user.userNAME}}님의 약 목록</h1>
     <p>{{pill.PillName}}</p>
 {% endfor %}
 {% endif %}
