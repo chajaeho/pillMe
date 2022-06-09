@@ -17,4 +17,5 @@ urlpatterns = [
     path('find/', views.find, name='find'),
     path('findPassword/', views.findPassword, name='findPassword'),
     path('friend/<str:friendID>/delete', views.deleteFriend, name='deleteFriend'),
+    path('pillinfo/', views.pillinfo, name='pillinfo'),
 ]

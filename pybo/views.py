@@ -12,7 +12,9 @@ import base64
 import time, json
 from .sendSMS import SendSMS
 from django.db.models import F
+from urllib.parse import urlencode, unquote, quote_plus
 
+import requests
 # Create your views here.
 
 def index(request):
@@ -193,3 +195,21 @@ def findPassword(request):
     return render('pybo/main.html')
 
 
+
+def pillinfo(request):
+    if request.method == "GET":
+        return render(request, 'pybo/pillinfo.html')
+    elif request.method == "POST":
+        q = request.POST.get('q', '')
+
+
+        url = 'http://apis.data.go.kr/1471000/HtfsTrgetInfoService01/getHtfsInfoList01'
+        # url = 'http://34.64.106.196:8080/getApiData.php'
+        serviceKey = '8/bnxiQS+6+cZaLNhKmIRXawXVN8vYxJh23R3gZDCnHi0fzQuzUuY2XeXsibxBc6rt4h9iuZfXkP4/65n1eyrA=='
+        params ={'serviceKey' : serviceKey, 'prdlst_nm' : q, 'bssh_nm' : '', 'pageNo' : '1', 'numOfRows' : '3', 'type' : 'xml' }
+        response = requests.get(url, params=params)
+        print(response.content)
+        return render(request, 'pybo/pillinfo.html', {'response' : response})
+
+ 
+ 
