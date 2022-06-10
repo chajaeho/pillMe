@@ -11,8 +11,15 @@
         </div>
     </div>
 </div>
-{% if response %}
-    <p>{{response.content}}</p>
+
+{% if r_data %}
+{% for item in r_data %}
+    <p>{{item.PRDLST_NM}}</p>
+    <p>{{item.BSSH_NM}}</p>
+    <p>{{item.NTK_MTHD}}</p>
+    <p>{{item_PRIMARY_FNCLTY}}</p>
+    <br>
+{% endfor %}
 {% else %}
 <p> aaa</p>
 {% endif %}

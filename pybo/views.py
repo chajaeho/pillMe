@@ -1,3 +1,4 @@
+#-*- coding:UTF-8 -*-
 from django.shortcuts import render, redirect
 from .models import UserMember
 from django.http import HttpResponse
@@ -13,8 +14,11 @@ import time, json
 from .sendSMS import SendSMS
 from django.db.models import F
 from urllib.parse import urlencode, unquote, quote_plus
-
+import xmltodict
+from bs4 import BeautifulSoup
+from .searchPill import search 
 import requests
+from django.db import connection
 # Create your views here.
 
 def index(request):
@@ -201,15 +205,39 @@ def pillinfo(request):
         return render(request, 'pybo/pillinfo.html')
     elif request.method == "POST":
         q = request.POST.get('q', '')
-
-
         url = 'http://apis.data.go.kr/1471000/HtfsTrgetInfoService01/getHtfsInfoList01'
         # url = 'http://34.64.106.196:8080/getApiData.php'
         serviceKey = '8/bnxiQS+6+cZaLNhKmIRXawXVN8vYxJh23R3gZDCnHi0fzQuzUuY2XeXsibxBc6rt4h9iuZfXkP4/65n1eyrA=='
-        params ={'serviceKey' : serviceKey, 'prdlst_nm' : q, 'bssh_nm' : '', 'pageNo' : '1', 'numOfRows' : '3', 'type' : 'xml' }
+        params ={'serviceKey' : serviceKey, 'prdlst_nm' : q, 'bssh_nm' : '', 'pageNo' : '1', 'numOfRows' : '3', 'type' : 'json' }
         response = requests.get(url, params=params)
-        print(response.content)
-        return render(request, 'pybo/pillinfo.html', {'response' : response})
+        responsedecoded = response.content.decode('utf-8')
+        r_dd = response.json()
+        r_data = r_dd["body"]["items"]
+       # data = r_data.content.decode('utf-8')
+        print(r_data)
 
- 
- 
+
+        # dataJson = response.json()
+
+#        for item in response.content['header']['body']['items']['item']:
+ #           print(item)
+       # data = r_item.decode('utf-8')
+       # data = response.content.decode('utf-8')
+
+        #data = response.content.decode('utf-8')
+
+     #   dataJson = json.loads(response.content)
+      #  dataJson['PRDLST_NM']
+       # data = response.content.decode('utf-8')
+        # result_data = response.content.json()
+      #  print(dataJson)
+
+        return render(request, 'pybo/pillinfo.html', context={'r_data':r_data})
+
+        # 
+ # {'data' : data}
+
+
+ def pillcalendar(PillMaster):
+     with connection.cursor() as curosr:
+         cursor.execute("")
