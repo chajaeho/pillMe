@@ -6,19 +6,24 @@
     <div class="loginInBox">
         <div class="middleBox">
             <div class="bg" style="float:left;">
-                <img src="/static/doctor.png" width="550" height="620">
+                <img class="move" src="/static/doctor.png" width="550" height="620">
             </div>
             <div class ="mybox" style="float:right;">
-                <a href="/pybo/mypill"><p><input type="image" src="/static/pill.png" alt="약아이콘"  width="80" height="80" > My Pill</p></a>
-                <a href="/pybo/friend"><p><input type="image" src="/static/3D.png" alt="친구아이콘"  width="80" height="80" > Friend</p></a>
-                <a href="/pybo/pillinfo"><p><input type="image" src="/static/information.png" alt="정보아이콘"  width="80" height="80" > Pill info</p></a>
+                <a href="/pybo/mypill"><p><img src="/static/pill.png" alt="약아이콘"  width="80" height="80" > My Pill</p></a>
+                <a href="/pybo/friend"><p><img src="/static/3D.png" alt="친구아이콘"  width="80" height="80"> Friend</p></a>
+                <a href="/pybo/pillinfo"><p><img  src="/static/information.png" alt="정보아이콘"  width="80" height="80" > Pill info</p></a>
             </div>
         </div>
     </div>
 </div>
 
 {% else %}
-
+<div class="loginOutBox">
+    <div class="loginInBox">
+        <div class="middleBox">
+        </div>
+    </div>
+</div>
 {% endif %}
 
 {% endblock %}

@@ -8,10 +8,20 @@
 }
 
 body {
-  background-color: #6667ab;
+  margin: 0;
+  padding: 0;
+  background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 
 }
 
+
+#container {
+  width: 1280px;
+  margin: 0px auto;
+  background-color: #6667ab;
+  box-shadow: 0px 0px 10px #000000;
+
+}
 a{
     color: white;
     text-decoration: none;
@@ -25,7 +35,7 @@ ul {
 }
 
 #nav2 {
-    margin-top : 35px;
+    margin-top : 0px;
     color: white;
     text-decoration: none;
 }
@@ -86,6 +96,14 @@ h2 {
 
 }
 
+.move:hover {
+   animation: motion 0.3s linear 0s infinite alternate; margin-top: 0;
+}
+
+@keyframes motion {
+	0% {margin-top: 0px;}
+	100% {margin-top: 10px;}
+}
 .loginInBox {
     text-align: center;
     display: table-cell;
@@ -98,7 +116,7 @@ h2 {
     width: 400px;
     margin: 0 auto;
     padding: 2rem;
-    border-radius: 40px 40px 40px 40px;
+    border-radius: 30px 30px 30px 30px;
 }
 
 .searchBox {

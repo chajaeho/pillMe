@@ -39,19 +39,25 @@ def login_user(request):
     elif request.method == "POST":
         login_userID = request.POST.get('userID', None)
         login_userPW = request.POST.get('userPW', None) 
+        user = UserMember.objects.filter(userID=login_userID)
 
-        if not (login_userID and login_userPW):
-            response_data['error']="아이디와 비밀번호를 모두 입력하세요."
-
-        else:
-            user = UserMember.objects.get(userID=login_userID)
-            if (login_userPW ==user.userPW):
-                request.session['user'] = user.userID
-                return redirect('/pybo')
-            else:
-                response_data['error'] = "비밀번호가 틀립니다."
+        if user.exists():
+            if not (login_userID and login_userPW):
+                response_data['error']="아이디와 비밀번호를 모두 입력하세요."
                 return render(request, 'pybo/login.html', response_data)
-            
+
+            else:
+                user = UserMember.objects.get(userID=login_userID)
+                if (login_userPW==user.userPW):
+                    request.session['user'] = user.userID
+                    return redirect('/pybo')
+                elif (login_userPW!=user.userPW):
+                    response_data['error'] = "비밀번호가 틀립니다."
+                    return render(request, 'pybo/login.html', response_data)
+        else:
+            response_data['error'] = "존재하지 않는 아이디입니다."
+            return render(request, 'pybo/login.html', response_data)
+ 
 def logout(request):
     request.session.pop('user')
     return redirect('/pybo')
@@ -67,15 +73,25 @@ def signup(request):
         userNAME = request.POST.get('userNAME', None)
         userTEL = request.POST.get('userTEL', None)
         res_data = {}
-        if not(userID and userPW and reuserPW and userNAME and userTEL):
-            res_data['error'] = "모든 값을 입력해야 합니다."
-        if userPW != reuserPW:
-            res_data['error'] = "비밀번호가 다릅니다."
+
+        user = UserMember.objects.filter(userID=userID)
+        if user.exists():
+            res_data['error'] = "이미 존재하는 아이디입니다."
+            return render(request, 'pybo/signup.html', res_data)
         else:
-            user = UserMember(userID=userID, userPW=userPW, userNAME=userNAME, userTEL=userTEL)
-            user.save()
-        
-        return render(request, 'pybo/main.html')
+            if not(userID and userPW and reuserPW and userNAME and userTEL):
+                res_data['error'] = "모든 값을 입력해야 합니다."
+                return render(request, 'pybo/signup.html', res_data)
+
+            if userPW != reuserPW:
+                res_data['error'] = "비밀번호가 다릅니다."
+                return render(request, 'pybo/signup.html', res_data)
+
+            else:
+                user = UserMember(userID=userID, userPW=userPW, userNAME=userNAME, userTEL=userTEL)
+                user.save()
+                return render(request, 'pybo/main.html')
+               
 
 def main(request):
     user_id = request.session.get('user')
@@ -108,7 +124,7 @@ def search(request):
     q = request.POST.get('q', '')
 
     if q:
-        users = users.filter(userID__icontains=q)
+        users = users.filter(userID=q)
         friend = users.get(userID=q)        
         friends = Friend()
         friends.FriendMaster = request.session.get('user')
@@ -129,8 +145,12 @@ def search(request):
 
 def friendpill(request, username):
    # pilllist = PillList.objects.all()
+
+    q = request.session.get('user')
+    user = UserMember.objects.get(userID=q)
+
     pillList = PillList.objects.filter(PillMaster__icontains=username)
-    user = UserMember.objects.get(userID__icontains=username)
+    friend = UserMember.objects.get(userID__icontains=username)
     if pillList:
         try:
             cursor = connection.cursor()
@@ -143,7 +163,7 @@ def friendpill(request, username):
             print("success!!")
         except:
             print("failed")
-        return render(request, 'pybo/friendpill.html', {'user' : user, 'pillList': pillList})
+        return render(request, 'pybo/friendpill.html', {'friend': friend, 'user' : user, 'pillList': pillList})
     else:
         return render(request, 'pybo/friendpill.html')
 
@@ -159,8 +179,11 @@ def mypill(request):
         return render(request, 'pybo/mypill.html', {'pilllist': pilllist, 'user': user})
 
 
-def addpill(request):        
-        return render(request, 'pybo/addpill.html')
+def addpill(request):   
+    q = request.session.get('user')
+    if q:            
+        user = UserMember.objects.get(userID = q) 
+        return render(request, 'pybo/addpill.html', {'user':user})
 
 def addpillList(request):
 
@@ -197,7 +220,27 @@ def addpillList(request):
 
 
 def find(request):
-    return render(request, 'pybo/find.html')
+    if request.method == "GET":
+        return render(request, 'pybo/find.html')
+
+
+    elif request.method == "POST":
+        userID = request.POST.get('userID')
+        userTEL = request.POST.get('userTEL')
+        user = UserMember.objects.filter(userID=userID)
+        res_data = {}
+
+        if user.exists():
+            userMember = UserMember.objects.get(userID=userID)
+
+            if (userMember.userTEL==userTEL):
+                res_data['error'] = "전화번호가 다릅니다."
+                return render(request, 'pybo/find.html', res_data)
+            else:
+                return render(request, 'pybo/find.html', {'userMember': userMember})
+        else:
+            res_data['error'] = "존재하지 않는 아이디입니다."
+            return render(request, 'pybo/find.html', res_data)
 
 def findPassword(request):
     userID = request.POST.get('userID')
@@ -206,25 +249,36 @@ def findPassword(request):
     userMember = UserMember.objects.get(userID=userID)
     
 
-    return render('pybo/main.html', {userMember:'userMember'})
+    return render(request, 'pybo/find.html', {userMember:'userMember'})
 
 
 
 def pillinfo(request):
+
+    q = request.session.get('user') 
+    user = UserMember.objects.get(userID=q)
+ 
     if request.method == "GET":
-        return render(request, 'pybo/pillinfo.html')
+        return render(request, 'pybo/pillinfo.html', {'user': user})
     elif request.method == "POST":
         q = request.POST.get('q', '')
         url = 'http://apis.data.go.kr/1471000/HtfsTrgetInfoService01/getHtfsInfoList01'
         # url = 'http://34.64.106.196:8080/getApiData.php'
         serviceKey = '8/bnxiQS+6+cZaLNhKmIRXawXVN8vYxJh23R3gZDCnHi0fzQuzUuY2XeXsibxBc6rt4h9iuZfXkP4/65n1eyrA=='
-        params ={'serviceKey' : serviceKey, 'prdlst_nm' : q, 'bssh_nm' : '', 'pageNo' : '1', 'numOfRows' : '3', 'type' : 'json' }
+        params ={'serviceKey' : serviceKey, 'prdlst_nm' : q, 'bssh_nm' : '', 'pageNo' : '1', 'numOfRows' : '3', 'type' : 'json' }        
         response = requests.get(url, params=params)
         responsedecoded = response.content.decode('utf-8')
+        res_data={}
         r_dd = response.json()
-        r_data = r_dd["body"]["items"]
-       # data = r_data.content.decode('utf-8')
-        print(r_data)
+        try:
+            r_data = r_dd["body"]["items"]
+            return render(request, 'pybo/pillinfo.html', context={'r_data':r_data, 'user': user})
+        except:
+            print("error")
+        res_data['error'] = "결과가 존재하지 않습니다."
+        return render(request, 'pybo/pillinfo.html', res_data, {'user':user})
+      # data = r_data.content.decode('utf-8')
+       # print(r_data)
 
 
         # dataJson = response.json()
@@ -242,7 +296,7 @@ def pillinfo(request):
         # result_data = response.content.json()
       #  print(dataJson)
 
-        return render(request, 'pybo/pillinfo.html', context={'r_data':r_data})
+        #return render(request, 'pybo/pillinfo.html', context={'r_data':r_data, 'user': user})
 
         # 
  # {'data' : data}
