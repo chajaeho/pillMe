@@ -4,6 +4,7 @@
     <div class="loginInBox">
         <div class="box">
             <div class="container my-3">
+                {% if not userMember %}
                 <form method="post" action="{% url 'findPassword' %}">
                     {% csrf_token %}
                     <div class="mb-3">
@@ -16,6 +17,10 @@
                     </div>
                     <button type="submit" class="btn btn-primary">비밀번호 찾기</button>
                 </form>
+                {% else %}
+                <p>{{userMember.userPW}}</p>
+
+                {% endif %}
             </div>
         </div>
     </div>

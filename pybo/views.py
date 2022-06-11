@@ -204,9 +204,9 @@ def findPassword(request):
     userTEL = request.POST.get('userTEL')
 
     userMember = UserMember.objects.get(userID=userID)
-    SendSMS.send_SMS(userTEL, userMember.userNAME, userMember.userPW)
+    
 
-    return render('pybo/main.html')
+    return render('pybo/main.html', {userMember:'userMember'})
 
 
 
