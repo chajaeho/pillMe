@@ -8,7 +8,34 @@
 {% for pill in pillList.all %}
 <h1> {{user.userNAME}}님의 약 목록</h1>
     <p>{{pill.PillName}}</p>
-{% endfor %}
+{% endfor %} 
+<h1> {{user.userNAME}}님의 복용 기록</h1>
+<div class="calendarbody">
+    <div class="calendar">
+        <div class="header">
+            <div class="year-month"></div>
+            <div class="nav">
+                <button class="nav-btn go-prev" onclick="prevMonth()">&lt;</button>
+                <button class="nav-btn go-today" onclick="goToday()">Today</button>
+                <button class="nav-btn go-next" onclick="nextMonth()">&gt;</button>
+            </div>
+        </div>
+        <div class="main">
+            <div class="days">
+                <div class="day">Sun</div>
+                <div class="day">Mon</div>
+                <div class="day">Tue</div>
+                <div class="day">Wed</div>
+                <div class="day">Thu</div>
+                <div class="day">Fri</div>
+                <div class="day">Sat</div>
+            </div>
+            <div class="dates"></div>
+        </div>
+    </div>
+    <script src="/static/pillcalendar.js"></script>
+</div>
+
 {% endif %}
 
 {% endblock %}
