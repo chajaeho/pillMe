@@ -19,14 +19,45 @@ from bs4 import BeautifulSoup
 from .searchPill import search 
 import requests
 from django.db import connection
+import datetime
 # Create your views here.
+
+def pillreminder(pillmaster):
+    now = datetime.datetime.now()
+    nowTime = now.strftime('%H:%M')
+    print(nowTime)
+    try:
+        nowTime = now.strftime('%H:%M')
+        print(nowTime)
+        cursor = connection.cursor()
+        strSql = "SELECT * FROM PillMe.PillTime as A WHERE (TIME_TO_SEC('"+nowTime+"') - TIME_TO_SEC(EatTime))/60 <= 30 AND PillMaster = '"+pillmaster+"'  AND NOT EXISTS ( SELECT *, DATE_FORMAT(PillTakeTime, '%H:%I'), (TIME_TO_SEC(DATE_FORMAT(PillTakeTime, '%H:%I')) - TIME_TO_SEC(A.EatTime))/60 FROM PillMe.PillTake WHERE DATE_FORMAT(PillTakeTime, '%Y-%m-%d') = DATE_FORMAT(now(), '%Y-%m-%d') AND ModuleNum = A.ModuleNum AND (TIME_TO_SEC(DATE_FORMAT(PillTakeTime, '%H:%I')) - TIME_TO_SEC(A.EatTime))/60 <= 30 AND (TIME_TO_SEC(DATE_FORMAT(PillTakeTime, '%H:%I')) - TIME_TO_SEC(A.EatTime))/60 >= 0) ORDER BY EatTime ASC"
+        result = cursor.execute(strSql)
+        pillReminder = cursor.fetchall()
+
+        print(pillReminder)
+        print(pillReminder[0])
+        pillReminder = pillReminder[0]
+        connection.commit()
+        connection.close()
+        print("success!!")
+
+        print(pillReminder[2])
+        pillReminder = pillReminder[2]+' - '+pillReminder[4]
+        return pillReminder
+    except:
+        print("failed")
+
+
+    return '알림이 없습니다.'
+
 
 def index(request):
     user_id = request.session.get('user')
 
     if user_id:
         user = UserMember.objects.get(userID=user_id)
-        return render(request, 'pybo/main.html', {'user' : user})
+        pillReminder = pillreminder(user_id)
+        return render(request, 'pybo/main.html', {'user' : user, 'pillReminder':pillReminder})
     else:
         return render(request, 'pybo/main.html') 
     
@@ -97,19 +128,20 @@ def main(request):
     user_id = request.session.get('user')
 
     if user_id:
-        user = UserMember.objects.get(userID=user_id)
-        return render(request, 'pybo/main.html', {'user' : user})
+        user = UserMember.objects.get(userID=user_idj)
+        pillReminder = pillreminder(user_id)
+        return render(request, 'pybo/main.html', {'user' : user, 'pillReminder':pillReminder})
     else:
         return render(request, 'pybo/main.html') 
-
 
 def friend(request):    
     q = request.session.get('user')
     Friends = Friend.objects.all()
     if q:
+        pillReminder = pillreminder(q)
         user = UserMember.objects.get(userID=q)
         friendlist = Friends.filter(FriendMaster__icontains=q)
-        return render(request, 'pybo/friend.html', {'friendlist': friendlist, 'user': user})
+        return render(request, 'pybo/friend.html', {'friendlist': friendlist, 'user': user, 'pillReminder':pillReminder})
 
 def deleteFriend(request, friendID):
      FriendMaster = request.session.get('user')
@@ -125,17 +157,20 @@ def search(request):
 
     if q:
         users = users.filter(userID=q)
-        friend = users.get(userID=q)        
-        friends = Friend()
-        friends.FriendMaster = request.session.get('user')
-        friends.FriendID=friend.userID
-        friends.save()
 
-        userId = request.session.get('user')
-        friendlist = Friend.objects.all()
-        friendlist = friendlist.filter(FriendMaster__icontains=userId)
-      #  return render(request, 'pybo/friend.html', {'friendlist' : friendlist})
-        return redirect('/pybo/friend')
+        if users.exists():
+            friend = users.get(userID=q)        
+            friends = Friend()
+            friends.FriendMaster = request.session.get('user')
+            friends.FriendID=friend.userID
+            friends.save()
+
+            userId = request.session.get('user')
+            friendlist = Friend.objects.all()
+            friendlist = friendlist.filter(FriendMaster__icontains=userId)
+            return redirect('/pybo/friend')
+        else:
+            return redirect('/pybo/friend')
     else:
         userId = request.user.userId
         friendlist = Friend.objects.all()
@@ -145,12 +180,8 @@ def search(request):
 
 def friendpill(request, username):
    # pilllist = PillList.objects.all()
-
-    q = request.session.get('user')
-    user = UserMember.objects.get(userID=q)
-
     pillList = PillList.objects.filter(PillMaster__icontains=username)
-    friend = UserMember.objects.get(userID__icontains=username)
+    user = UserMember.objects.get(userID__icontains=username)
     if pillList:
         try:
             cursor = connection.cursor()
@@ -160,10 +191,25 @@ def friendpill(request, username):
 
             connection.commit()
             connection.close()
+
+            cnt = []
+            startDate = []
+            for value in pillcalendar :
+                cnt.append(value[0])
+                startDate.append(value[1])
+            i = 0
+
+            pillcalDict = {}
+
+            for value in pillcalendar :
+                pillcalDict[int(str(startDate[i])[8:])] = cnt[i]
+                i = i + 1
+
+            print(pillcalDict)
             print("success!!")
         except:
             print("failed")
-        return render(request, 'pybo/friendpill.html', {'friend': friend, 'user' : user, 'pillList': pillList})
+        return render(request, 'pybo/friendpill.html', {'user' : user, 'pillList' : pillList, 'pillcalDict' :  pillcalDict})
     else:
         return render(request, 'pybo/friendpill.html')
 
@@ -177,6 +223,16 @@ def mypill(request):
         user = UserMember.objects.get(userID = q)
         pilllist = pilllist.filter(PillMaster__icontains=q)        
         return render(request, 'pybo/mypill.html', {'pilllist': pilllist, 'user': user})
+
+def mypill(request):
+    pilllist = PillList.objects.all()
+    
+    q = request.session.get('user')
+    if q: 
+        pillReminder = pillreminder(q)   
+        user = UserMember.objects.get(userID = q)
+        pilllist = pilllist.filter(PillMaster__icontains=q)        
+        return render(request, 'pybo/mypill.html', {'pilllist': pilllist, 'user': user, 'pillReminder':pillReminder})
 
 
 def addpill(request):   
@@ -242,24 +298,14 @@ def find(request):
             res_data['error'] = "존재하지 않는 아이디입니다."
             return render(request, 'pybo/find.html', res_data)
 
-def findPassword(request):
-    userID = request.POST.get('userID')
-    userTEL = request.POST.get('userTEL')
-
-    userMember = UserMember.objects.get(userID=userID)
-    
-
-    return render(request, 'pybo/find.html', {userMember:'userMember'})
-
-
-
 def pillinfo(request):
 
     q = request.session.get('user') 
     user = UserMember.objects.get(userID=q)
- 
+    pillReminder = pillreminder(q)
+
     if request.method == "GET":
-        return render(request, 'pybo/pillinfo.html', {'user': user})
+        return render(request, 'pybo/pillinfo.html', {'user': user, 'pillReminder':pillReminder})
     elif request.method == "POST":
         q = request.POST.get('q', '')
         url = 'http://apis.data.go.kr/1471000/HtfsTrgetInfoService01/getHtfsInfoList01'
@@ -270,13 +316,26 @@ def pillinfo(request):
         responsedecoded = response.content.decode('utf-8')
         res_data={}
         r_dd = response.json()
+        
         try:
             r_data = r_dd["body"]["items"]
-            return render(request, 'pybo/pillinfo.html', context={'r_data':r_data, 'user': user})
+            return render(request, 'pybo/pillinfo.html', context={'r_data':r_data, 'user': user, 'pillReminder':pillReminder})
         except:
-            print("error")
-        res_data['error'] = "결과가 존재하지 않습니다."
-        return render(request, 'pybo/pillinfo.html', res_data, {'user':user})
+            pass
+        res_data['error'] = "결과가 없습니다."
+        
+
+        return render(request, 'pybo/pillinfo.html',  {'res_data':res_data, 'user':user, 'pillReminder':pillReminder})
+        
+        #try:
+        #    r_data = r_dd["body"]["items"]
+        #    return render(request, 'pybo/pillinfo.html', context={'r_data':r_data, 'user': user})
+       # except KeyError:
+        #    print("error")
+       #     res_data['error'] = "결과가 존재하지 않습니다."
+           # return redirect('/pybo/pillinfo')
+           
+        #    return render(request, 'pybo/pillinfo.html', res_data, {'user':user})
       # data = r_data.content.decode('utf-8')
        # print(r_data)
 
@@ -302,3 +361,11 @@ def pillinfo(request):
  # {'data' : data}
 
 
+def mypillinfo(request, pillName):
+    q = request.session.get('user')
+    pillReminder = pillreminder(q)
+
+    user = UserMember.objects.get(userID=q)
+
+
+    return render(request, 'pybo/mypillinfo.html', {'user':user, 'pillReminder':pillReminder})

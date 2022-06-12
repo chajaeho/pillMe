@@ -14,6 +14,18 @@ body {
 
 }
 
+.title {
+  font-size: 120px; font-weight:bold; margin-top: 50px;
+}
+
+.pillreminder {
+  color:#ff7474f6; font-size:30px; font-weight:bold;
+}
+
+.searchbar {
+  position: absolute;
+  top: 200px;
+}
 
 #container {
   width: 1280px;
@@ -21,6 +33,19 @@ body {
   background-color: #6667ab;
   box-shadow: 0px 0px 10px #000000;
 
+}
+.user {
+  margin-top:45px;
+  font-size:25px;
+  font-weight: bold;
+
+}
+.userimage {
+  float: left;
+  margin-right: 10px;
+  clear:both;
+  width:85px;
+  height:75px;
 }
 a{
     color: white;
@@ -104,6 +129,7 @@ h2 {
 	0% {margin-top: 0px;}
 	100% {margin-top: 10px;}
 }
+
 .loginInBox {
     text-align: center;
     display: table-cell;
@@ -126,6 +152,7 @@ h2 {
     height: 150px;
     line-height: 150px;
 }
+
 .bg {
     margin-top : 150px;
     margin-left: 100px;
@@ -264,3 +291,28 @@ h2 {
   transform: translate(-50%, -50%);
   content: '';
 }
+
+.eatedAll {
+  position: relative;
+  color: #FFffff;
+  background-color:green;
+  border-radius: 10px;
+  
+}
+
+.eatedOne {
+  position: relative;
+  color: #FFffff;
+  background-color:orange;
+  border-radius: 10px;
+  
+}
+
+.eatedNone {
+  position: relative;
+  color: #FFffff;
+  background-color:#FF0000;
+  border-radius: 10px;
+  
+}
+

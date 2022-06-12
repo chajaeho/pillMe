@@ -1,19 +1,23 @@
 {% extends "base.html" %}
 {% block content %}
-<h4> {{friend.userNAME}}님</h4>
+<h4> {{user.userNAME}}님</h4>
 <a href="delete">삭제</a>
 {% if not pillList %}
 <h4> 약이 없습니다. </h4>
 {% else %}
 {% for pill in pillList.all %}
-<h1> {{friend.userNAME}}님의 약 목록</h1>
+<h1> {{user.userNAME}}님의 약 목록</h1>
     <p>{{pill.PillName}}</p>
 {% endfor %} 
-<h1> {{friend.userNAME}}님의 복용 현황</h1>
+<h1> {{user.userNAME}}님의 복용 기록</h1>
+
+{% url 'searchFriendPill' %}
+
 <div class="calendarbody">
     <div class="calendar">
         <div class="header">
             <div class="year-month"></div>
+            <!-- 캘린더 버튼 -->
             <div class="nav">
                 <button class="nav-btn go-prev" onclick="prevMonth()">&lt;</button>
                 <button class="nav-btn go-today" onclick="goToday()">Today</button>
@@ -33,7 +37,121 @@
             <div class="dates"></div>
         </div>
     </div>
-    <script src="/static/pillcalendar.js"></script>
+    <script>
+        var pillcal = "{{ pillcalDict }}";
+        var parse = pillcal.substr(1, pillcal.length-2);
+        var slice = parse.split(', ');//'MM': cnt
+
+        var startDate = [];
+        var cnt = [];
+        var j = 0;
+
+        for (var i = 0; i < slice.length; i++){
+            let temp = slice[i].split(': ');
+            startDate[i] = Number(temp[0]);//MM
+            cnt[i] = Number(temp[1]);//cnt
+        }
+
+        // Date 객체 생성
+        let date = new Date();
+        const prevMonth = () => {
+        date.setDate(1);
+        date.setMonth(date.getMonth() - 1);
+        renderCalendar();
+        }
+
+        const nextMonth = () => {
+        date.setDate(1);
+        date.setMonth(date.getMonth() + 1);
+        renderCalendar();
+        }
+
+        const goToday = () => {
+        date = new Date();
+        renderCalendar();
+        }
+
+
+        const renderCalendar = () => {
+        const viewYear = date.getFullYear();
+        const viewMonth = date.getMonth();
+        
+        // year-month 채우기
+        document.querySelector('.year-month').textContent = `${viewYear}년 ${viewMonth + 1}월`;
+
+        // 지난 달 마지막 Date, 이번 달 마지막 Date
+        const prevLast = new Date(viewYear, viewMonth, 0);
+        const thisLast = new Date(viewYear, viewMonth + 1, 0);
+
+        const PLDate = prevLast.getDate();
+        const PLDay = prevLast.getDay();
+
+        const TLDate = thisLast.getDate();
+        const TLDay = thisLast.getDay();
+
+        // Dates 기본 배열들
+        const prevDates = [];
+        const thisDates = [...Array(TLDate + 1).keys()].slice(1);
+        const nextDates = [];
+
+        
+
+        // prevDates 계산
+        if (PLDay !== 6) {
+            for (let i = 0; i < PLDay + 1; i++) {
+            prevDates.unshift(PLDate - i);
+            }
+        }
+
+        // nextDates 계산
+        for (let i = 1; i < 7 - TLDay; i++) {
+            nextDates.push(i)
+        }
+
+        // Dates 합치기
+        const dates = prevDates.concat(thisDates, nextDates);
+
+        // Dates 정리
+        const firstDateIndex = dates.indexOf(1);
+        const lastDateIndex = dates.lastIndexOf(TLDate);
+        dates.forEach((date, i) => {
+            const condition = i >= firstDateIndex && i < lastDateIndex + 1
+                            ? 'this'
+                            : 'other';
+
+            dates[i] = `<div class="date"><span class="${condition}">${date}</span></div>`;
+        })
+
+
+        // Dates 그리기
+        document.querySelector('.dates').innerHTML = dates.join('');
+
+        const today = new Date();
+        if (viewMonth === today.getMonth() && viewYear === today.getFullYear()) {
+            for (let date of document.querySelectorAll('.this')) {//이번달에 해당하는 것 중
+                if (+date.innerText <= today.getDate()) {//오늘 날짜이하 이면 색상을 그림
+                    //date.classList.add('eatedNone')//한개도 안먹은날
+
+                    if(startDate[j] == +date.innerText && 3 == cnt[j])
+                    {
+                        date.classList.add('eatedAll');//다 먹은날
+                        j++;
+                    }
+                    else if(startDate[j] == +date.innerText && 1 <= cnt[j])
+                    {
+                        date.classList.add('eatedOne');//다는 아니지만 한개 이상 먹은날
+                        j++;
+                    }
+                    else
+                    {
+                        date.classList.add('eatedNone')//한개도 안먹은날
+                    }
+                }
+            }
+        }
+        }
+        renderCalendar();
+    </script>
 </div>
 
 {% endif %}
