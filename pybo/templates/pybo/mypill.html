@@ -1,12 +1,55 @@
 {% extends "base.html" %}
 {% block content %}
-<button type="botton" onclick="location.href='/pybo/addpill'">+</button>
+<div class="loginOutBox">
+   <div class="loginInBox">
+      <HEAD>
+         <style>
+        button{
+            width:150px;
+            height: 150px;
+            color:#fff;
+            background: #495057;
+            font-size: 40px;
+            font-weight: bold;
+            border-radius : 25%;
+            border-color : #343a40;
+            border: 15px solid #343a40;        }
+        button:focus {
+            outline:0;
+        }
+        button:hover{
+            background: rgba(0,79,255,0.9);
+            cursor: pointer;	
+        }
+         </style> 
+         </HEAD>
+          <body>
+      </body>  
 {% if not pilllist %}
-<h4 style = "font-size:30px; font-weight:bold;"> 등록된 약이 없습니다. </h4>
+<h4 class="mypillBox"> 등록된 약이 없습니다. </h4>
+<button type="botton" onclick="location.href='/pybo/addpill'">+</button>
 {% else %}
-<h1> {{user.userNAME}}님의 약 목록</h1>
+<h1 class="mypillBox"> {{user.userNAME}}님의 약 목록</h1>
+<div class="friendBox">
+
 {% for pill in pilllist.all %}
-   <h1><a href="{{pill.PillName}}"><input type="image" src="/static/pillicon.png" alt="약아이콘"> {{ pill.PillName }}</a></h1>
+{% if forloop.counter0|divisibleby:3 %}  
+</div>
+<div class="friendBox">
+   {%endif%}
+   <a href="{{pill.PillName}}">
+      <div class="pillBox">
+         <p class="friendlist"> {{ pill.PillName }}</p>
+      </div>
+   </a>
+
 {% endfor %}
+
+</div>
+<button type="botton" onclick="location.href='/pybo/addpill'">+</button>
+
 {% endif %}
 {% endblock %}
+
+</div>
+</div>  

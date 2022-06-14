@@ -8,11 +8,11 @@
                 <form class="timeform" method="POST">
                     {% csrf_token %}
                     <h3 style = "color:#fffffff6; font-size:30px; font-weight:bold;">모듈 이름</h3>
-                    <input type="text" id="ModuleNum" name="ModuleNum" value="{{pillList.ModuleNum}}" disabled, placeholder="{{pillList.ModuleNum}}"style="width:400px; height:50px; text-align:center; margin:20px">
+                    <input type="text" id="ModuleNum" name="ModuleNum" value="{{pillList.ModuleNum}}" placeholder="{{pillList.ModuleNum}}"style="width:400px; height:50px; text-align:center; margin:20px" readonly>
                     <h3 style = "color:#fffffff6; font-size:30px; font-weight:bold;">약 이름</h3>
-                    <input type="text" id="search_kw" name="PillName" value="{{pillList.PillName}}" disabled, placeholder="{{pillList.PillName}}" style="width:400px; height:50px; text-align:center; margin:20px">
+                    <input type="text" id="search_kw" name="PillName" value="{{pillList.PillName}}" placeholder="{{pillList.PillName}}" style="width:400px; height:50px; text-align:center; margin:20px" readonly>
                     <h3 style = "color:#fffffff6; font-size:30px; font-weight:bold;">병 길이</h3>
-                    <input type="text" id="search_kw" name="PillLength" value="{{pillList.PillLength}}" disabled, placeholder="{{pillList.PillLength}}" style="width:400px; height:50px; text-align:center; margin:20px">  
+                    <input type="text" id="search_kw" name="PillLength" value="{{pillList.PillLength}}" placeholder="{{pillList.PillLength}}" style="width:400px; height:50px; text-align:center; margin:20px" readonly>  
                     <br>
                     <select>
                         <option>매일</option>
@@ -23,8 +23,8 @@
                         <option id="PillTime3" name="PillTime" value="3" {% if pillList.PillTime == "2" %} selected {% endif %}>3</option>
                     </select>
                     <select name="PillEat">
-                        <option id="PillEat1" name="before" value="before" {% if pillList.PillTime == "0" %} selected {% endif %}>before</option>
-                        <option id="PillEat2" name="after" value="after" {% if pillList.PillTime == "1" %} selected {% endif %}>after</option>
+                        <option id="PillEat1" name="before" value="before" {% if pillList.PillEat == "0" %} selected {% endif %}>before</option>
+                        <option id="PillEat2" name="after" value="after" {% if pillList.PillEat == "1" %} selected {% endif %}>after</option>
                     </select>
                     <div id="test">
                         <div id="test2">

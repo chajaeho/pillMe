@@ -14,13 +14,20 @@
 
 {% if r_data %}
 {% for item in r_data %}
-    <p>{{item.PRDLST_NM}}</p>
+<div class="pillinfoBox">
+    <p class="pilldata">{{item.PRDLST_NM}}</p>
     <p>{{item.BSSH_NM}}</p>
     <p>{{item.NTK_MTHD}}</p>
     <p>{{item_PRIMARY_FNCLTY}}</p>
     <br>
+</div>
+
+
 {% endfor %}
 {% else %}
-<p>{{res_data.error}}</p>
+<div class="pillinfoBox">
+    <p class = "pilldata">{{res_data.error}}</p>
+</div>
+
 {% endif %}
 {% endblock %}

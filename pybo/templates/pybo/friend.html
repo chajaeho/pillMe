@@ -5,24 +5,34 @@
         <div class="searchBox">
             <form id="searchForm" method="post" action="{% url 'searchFriend' %}">
                 {% csrf_token %}
-                 <input type="text" id="search_kw" name="q" value="{{q}}" placeholder="ID로 검색하여 친구 추가하기" style="width:350px; height:42px; text-align:center;">
-                 <button type="submit" class="btnFriend" id="btn_search" name="searchFriend">SEARCH</button>
-             </form>
+                <input type="text" id="search_kw" name="q" value="{{q}}" placeholder="ID로 검색하여 친구 추가하기"
+                    style="width:350px; height:42px; text-align:center;">
+                <button type="submit" class="btnFriend" id="btn_search" name="searchFriend">SEARCH</button>
+            </form>
         </div>
         <div class="friendlist">
             {% if not friendlist %}
-                <h4> 친구가 없습니다. </h4>
+            <h4> 친구가 없습니다. </h4>
             {% else %}
-                <h1> {{user.userNAME}}님의 친구 목록</h1>
+            <h1> {{user.userNAME}}님의 친구 목록</h1>
+            <div class="friendBox">
                 {% for friend in friendlist.all %}
-                    <a href="{{friend.FriendID}}">
-                        <input type="image" src="/static/image1.jpg" alt="프로필사진">
-                        <p>{{friend.FriendID}}</p>
-                    </a>
-                {% endfor %}
-            {% endif %}
+                {% if forloop.counter0|divisibleby:3 %}
+            </div>
+            <div class="friendBox">
+                {% endif %}
+                <a href="{{friend.FriendID}}">
+                    <div class="circle">
+                        <p class="friendlist">{{friend.FriendID}}</p>
+                    </div>
+           
+        </a>
+            {% endfor %}
+         </div>
         </div>
+        {% endif %}
     </div>
+</div>
 </div>
 <br>
 {% endblock %}
