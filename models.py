@@ -26,7 +26,7 @@ class Pilllist(models.Model):
     pillday = models.CharField(db_column='PillDay', max_length=45)  # Field name made lowercase.
     pilltime = models.CharField(db_column='PillTime', max_length=45)  # Field name made lowercase.
     pilleat = models.CharField(db_column='PillEat', max_length=45)  # Field name made lowercase.
-
+    
     class Meta:
         managed = False
         db_table = 'PillList'

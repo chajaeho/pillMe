@@ -243,36 +243,240 @@ def addpill(request):
 
 def addpillList(request):
 
-    smartpill = PillList()
-    smartpill.ModuleNum = request.POST.get('ModuleNum')
-    smartpill.PillMaster = request.session.get('user')
-    smartpill.PillName = request.POST.get('PillName')
-    smartpill.PillAmount = '0'
-    PillEat = request.POST.get('PillEat') 
     pillTime = request.POST.get('PillTime')
+
+
+    if pillTime == '1':
+        pilltime = PillTime()
+        pilltime.ModuleNum = request.POST.get('ModuleNum')
+        pilltime.PillName =  request.POST.get('PillName') 
+        pilltime.PillMaster = request.session.get('user')
+        pilltime.EatTime = request.POST.get('EatTime1')
+        pilltime.save()
+
+    elif pillTime == '2':
+        pilltime = PillTime()
+        pilltime.ModuleNum = request.POST.get('ModuleNum')
+        pilltime.PillName =  request.POST.get('PillName') 
+        pilltime.PillMaster = request.session.get('user')
+        pilltime.EatTime = request.POST.get('EatTime1')
+        pilltime.save()
+
+        pilltime = PillTime()
+        pilltime.ModuleNum = request.POST.get('ModuleNum')
+        pilltime.PillName =  request.POST.get('PillName') 
+        pilltime.PillMaster = request.session.get('user')
+        pilltime.EatTime = request.POST.get('EatTime2')
+        pilltime.save()
+
+    else:
+        pilltime = PillTime()
+        pilltime.ModuleNum = request.POST.get('ModuleNum')
+        pilltime.PillName =  request.POST.get('PillName') 
+        pilltime.PillMaster = request.session.get('user')
+        pilltime.EatTime = request.POST.get('EatTime1')
+        pilltime.save()
+
+        pilltime = PillTime()
+        pilltime.ModuleNum = request.POST.get('ModuleNum')
+        pilltime.PillName =  request.POST.get('PillName') 
+        pilltime.PillMaster = request.session.get('user')
+        pilltime.EatTime = request.POST.get('EatTime2')
+        pilltime.save()
+
+        pilltime = PillTime()
+        pilltime.ModuleNum = request.POST.get('ModuleNum')
+        pilltime.PillName =  request.POST.get('PillName') 
+        pilltime.PillMaster = request.session.get('user')
+        pilltime.EatTime = request.POST.get('EatTime3')
+        pilltime.save()
+
+    smartpill = PillList()
+
+    PillEat = request.POST.get('PillEat')
 
     if PillEat == 'before':
         smartpill.PillEat = '0'
     else:
-        smartpill.PillEat = '1'
+        smartpill.PillEat = '1' 
 
-    if pillTime == '1':
-        smartpill.PillTime = '0'
-    elif pillTime == '2':
-        smartpill.PillTime = '1'
+    pillTime = request.POST.get('PillTime')
+    print(pillTime)
+    if pillTime =='1':
+        smartpill.PillTime='0'
+    elif pillTime =='2':
+        smartpill.PillTime='1'
     else:
-        smartpill.PillTime = '2'
+        smartpill.pillTime='2'
+    smartpill.ModuleNum = request.POST.get('ModuleNum')
+    smartpill.PillMaster = request.session.get('user')
+    smartpill.PillName = request.POST.get('PillName')
+    smartpill.PillAmount = '0'
+    # smartpill.PillLength=request.POST.get('PillLength')
+    smartpill.PillLength=request.POST.get('PillLength')
+    PillEat = request.POST.get('PillEat')
+    pillTime = request.POST.get('PillTime')
+
 
     smartpill.save()
 
-    pilltime = PillTime()
-    pilltime.ModuleNum = request.POST.get('ModuleNum')
-    pilltime.PillName =  request.POST.get('PillName') 
-    pilltime.PillMaster = request.session.get('user')
-    pilltime.EatTime = request.POST.get('EatTime')
-    pilltime.save()
+    # pilltime = PillTime()
+    # pilltime.ModuleNum = request.POST.get('ModuleNum')
+    # pilltime.PillName =  request.POST.get('PillName') 
+    # pilltime.PillMaster = request.session.get('user')
+    # pilltime.EatTime = request.POST.get('EatTime')
+    # pilltime.save()
     
-    return render(request, 'pybo/addpill.html')
+    return redirect('/pybo/mypill/')
+
+def editpillList(request, pillName):
+    if request.method=="GET":
+        user = request.session.get('user') 
+        pillList = PillList.objects.get(PillMaster=user, PillName=pillName)
+        pillTime = PillTime.objects.filter(PillMaster=user, PillName=pillName)
+        return render(request, 'pybo/mypillinfo.html', {'pillList':pillList, 'pillTime':pillTime}) 
+    elif request.method=="POST":
+        user = request.session.get('user') 
+        moduleNum = request.POST.get('ModuleNum')
+        print(moduleNum)
+
+        pillList= PillList.objects.get(PillMaster=user, PillName=pillName)
+        pillList.delete()
+
+        pillTime = PillTime.objects.filter(PillMaster=user, PillName=pillName)
+        pillTime.delete()
+        moduleNum = request.POST.get('ModuleNum')
+        print(moduleNum)
+        pillTake= PillTake.objects.filter(ModuleNum=moduleNum)
+        if pillTake.exists():
+            pillTake.delete()
+        else:
+            pass
+
+        pillTime = request.POST.get('PillTime')
+
+        if pillTime == '1':
+            pilltime = PillTime()
+            pilltime.ModuleNum = request.POST.get('ModuleNum')
+            pilltime.PillName =  request.POST.get('PillName') 
+            pilltime.PillMaster = request.session.get('user')
+            pilltime.EatTime = request.POST.get('EatTime1')
+            print(request.POST.get('EatTime1'))
+            pilltime.save()
+
+        elif pillTime == '2':
+            pilltime = PillTime()
+            pilltime.ModuleNum = request.POST.get('ModuleNum')
+            pilltime.PillName =  request.POST.get('PillName') 
+            pilltime.PillMaster = request.session.get('user')
+            pilltime.EatTime = request.POST.get('EatTime1')
+            print(request.POST.get('EatTime1'))
+
+            pilltime.save()
+
+            pilltime = PillTime()
+            pilltime.ModuleNum = request.POST.get('ModuleNum')
+            pilltime.PillName =  request.POST.get('PillName') 
+            pilltime.PillMaster = request.session.get('user')
+            pilltime.EatTime = request.POST.get('EatTime2')
+            pilltime.save()
+
+        else:
+            pilltime = PillTime()
+            pilltime.ModuleNum = request.POST.get('ModuleNum')
+            pilltime.PillName =  request.POST.get('PillName') 
+            pilltime.PillMaster = request.session.get('user')
+            pilltime.EatTime = request.POST.get('EatTime1')
+            print(request.POST.get('EatTime1'))
+
+            pilltime.save()
+
+            pilltime = PillTime()
+            pilltime.ModuleNum = request.POST.get('ModuleNum')
+            pilltime.PillName =  request.POST.get('PillName') 
+            pilltime.PillMaster = request.session.get('user')
+            pilltime.EatTime = request.POST.get('EatTime2')
+            pilltime.save()
+
+            pilltime = PillTime()
+            pilltime.ModuleNum = request.POST.get('ModuleNum')
+            pilltime.PillName =  request.POST.get('PillName') 
+            pilltime.PillMaster = request.session.get('user')
+            pilltime.EatTime = request.POST.get('EatTime3')
+            pilltime.save()
+
+        smartpill = PillList()
+
+        PillEat = request.POST.get('PillEat')
+
+        if PillEat == 'before':
+            smartpill.PillEat = '0'
+        else:
+            smartpill.PillEat = '1' 
+
+        pillTime = request.POST.get('PillTime')
+        print(pillTime)
+        if pillTime =='1':
+            smartpill.PillTime='0'
+        elif pillTime =='2':
+            smartpill.PillTime='1'
+        else:
+            smartpill.pillTime='2'
+        smartpill.ModuleNum = request.POST.get('ModuleNum')
+        smartpill.PillMaster = request.session.get('user')
+        smartpill.PillName = request.POST.get('PillName')
+        smartpill.PillAmount = '0'
+    # smartpill.PillLength=request.POST.get('PillLength')
+        smartpill.PillLength=request.POST.get('PillLength')
+        PillEat = request.POST.get('PillEat')
+        pillTime = request.POST.get('PillTime')
+
+
+        smartpill.save()
+
+        
+        
+        return redirect ('/pybo/mypill/')
+
+def edit(request, pillName):
+    user = request.session.get('user') 
+    pillList= PillList.objects.get(PillMaster=user, PillName=pillName)
+    moduleNum = pillList.ModuleNum
+    pillName = pillList.PillName
+    pillList.delete()
+
+    pillTime = PillTime.objects.filter(PillMaster=user, PillName=pillName)
+    pillTime.delete()
+   # moduleNum = request.POST.get('ModuleNum')
+    pillTake= PillTake.objects.filter(ModuleNum=moduleNum)
+    if pillTake.exists():
+        pillTake.delete()
+    else:
+        pass
+
+    return redirect ('/pybo/mypill/')
+ 
+def editpillList2(request, pillName):
+    pass
+        # user = request.session.get('user') 
+        # pillList = PillList.objects.get(PillMaster=user, PillName=pillName)
+        # pillTime = PillTime.objects.filter(PillMaster=user, PillName=pillName)
+        
+        # return render(request, 'pybo/mypillinfo.html', {'pillList':pillList, 'pillTime':pillTime})
+    # elif request.method == "POST":
+    #     pillList= pillList.objects.get(PillMaster=user, PillName=pillName)
+    #     pillList.delete()
+
+    #     pillTime = PillTime.objects.filter(PillMaster=user, PillName=pillName)
+    #     pillTime.delete()
+    #     moduleNum = request.POST.get('ModuleNum')
+    #     pillTake= PillTake.objects.filter(ModuleNum=moduleNum)
+    #     if pillTake.exists():
+    #         pillTake.delete()
+    #     else:
+    #         pass
+        
+    #     return redirect('pybo/mypill/')
 
 
 def find(request):

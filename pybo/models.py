@@ -28,6 +28,7 @@ class PillList(models.Model):
     PillAmount = models.CharField(max_length=45, null=False)
     PillTime = models.CharField(max_length=45, null=False)
     PillEat = models.CharField(max_length=45, null=False)
+    PillLength = models.CharField(max_length=45, null=False)
 
     class Meta:
         db_table = 'PillList'

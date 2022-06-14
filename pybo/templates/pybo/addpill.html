@@ -2,31 +2,68 @@
 {% block content %}
 <div class="loginOutBox">
     <div class="loginInBox">
-        <div class="middleBox">
-            <form method="post" action="{% url 'addpillList' %}">
-                {% csrf_token %}
-                <h3 style = "color:#fffffff6; font-size:30px; font-weight:bold; ">모듈 번호</h3>
-                <input type="text" id="ModuleNum" name="ModuleNum" value="{{ModuleNum}}" placeholder="모듈 번호를 입력하세요."style="width:400px; height:50px; text-align:center; margin:20px">
-                <h3 style = "color:#fffffff6; font-size:30px; font-weight:bold;">별칭 이름</h3>
-                <input type="text" id="search_kw" name="PillName" value="{{PillName}}" placeholder="별칭을 입력하세요." style="width:400px; height:50px; text-align:center; margin:20px">
-                <br>
-                <select>
-                    <option>매일</option>
-                    <option></option>
-                </select>
-                <select name="PillTime">
-                    <option id="PillTime" name="PillTime" value="1">1</option>
-                    <option id="PillTime" name="PillTime" value="2">2</option>
-                    <option id="PillTime" name="PillTime" value="3">3</option>
-                </select>
-                <select name="PillEat">
-                    <option id="PillEat" name="before" value="before">before</option>
-                    <option id="PillEat" name="after" value="after">after</option>
-                </select>
-                <input type="time" name="EatTime" value = "{{EatTime}}">
-                <button type="submit">추가</button>
-            </form> 
+        <div class="box">
+            <div class="container3">
+                <form method="post" action="{% url 'addpillList' %}">
+                    {% csrf_token %}
+                    <h3 style = "color:#fffffff6; font-size:30px; font-weight:bold; ">모듈 번호</h3>
+                    <input type="text" id="ModuleNum" name="ModuleNum" value="{{ModuleNum}}" placeholder="모듈 번호를 입력하세요."style="width:400px; height:50px; text-align:center; margin:20px">
+                    <h3 style = "color:#fffffff6; font-size:30px; font-weight:bold;">별칭 이름</h3>
+                    <input type="text" id="search_kw" name="PillName" value="{{PillName}}" placeholder="별칭을 입력하세요." style="width:400px; height:50px; text-align:center; margin:20px">
+                    <h3 style = "color:#fffffff6; font-size:30px; font-weight:bold;">병 길이</h3>
+                    <input type="text" id="search_kw" name="PillLength" value="{{PillLength}}" placeholder="병 길이를 입력하세요." style="width:400px; height:50px; text-align:center; margin:20px">  
+                    <br>
+                    <select>
+                        <option>매일</option>
+                        <option></option>
+                    </select>
+                    <select onchange="changePillTime()" id="PillTime" name="PillTime">
+                        <option id="PillTime" name="PillTime" value="1">1</option>
+                        <option id="PillTime" name="PillTime" value="2">2</option>
+                        <option id="PillTime" name="PillTime" value="3">3</option>
+                    </select>
+                    <select name="PillEat">
+                        <option id="PillEat" name="before" value="before">before</option>
+                        <option id="PillEat" name="after" value="after">after</option>
+                    </select>
+                    <div id="test">
+                    </div>
+                    <script>
+                        function changePillTime() {
+                            var selectOption = document.getElementById("PillTime");
+                            selectOption = selectOption.options[selectOption.selectedIndex].value;
+                            
+                            const div = document.getElementById('test2');
+                            
+                            alert(div);
+                            if (div != null) {
+                                div.remove();
+                            }
+
+                            var test = document.getElementById("test");
+                            var test2 = document.createElement('div');
+                            test2.setAttribute("id", "test2");
+                            test.appendChild(test2);
+                            for (var i = 0; i < selectOption; i++) {
+                                var para = document.createElement('input');
+                                var num = i + 1;
+                                var move = 'EatTime'+num;
+                                alert(move)
+                                para.setAttribute("type", "time");
+                                para.setAttribute("name", move);
+                                para.setAttribute("id", move);
+                                para.setAttribute("value","{{"+move+"}}");
+                                
+                                test2.appendChild(para);
+                            }
+                        }
+                    </script> 
+                    <button type="submit">추가</button>
+                </form> 
+            </div>
         </div>
     </div>
 </div>
-{% endblock %}}
+
+
+{% endblock %}
