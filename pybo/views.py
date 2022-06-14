@@ -180,12 +180,15 @@ def search(request):
 
 def friendpill(request, username):
    # pilllist = PillList.objects.all()
-    pillList = PillList.objects.filter(PillMaster__icontains=username)
-    user = UserMember.objects.get(userID__icontains=username)
+    user_id = request.session.get('user')
+    pillList = PillList.objects.filter(PillMaster=username)
+    friend = UserMember.objects.get(userID=username)
+    user = UserMember.objects.get(userID=user_id)
+    pillReminder = pillreminder(user_id)
     if pillList:
         try:
             cursor = connection.cursor()
-            strSql = "with recursive D as (select last_day(now() - interval 1 month) + interval 1 day as startDate union all select startDate + interval 1 day from D where startDate < last_day(now())) SELECT count(T.PillTakeTime) AS cnt, P.startDate FROM PillMe.PillTake AS T, ( SELECT C.ModuleNum as ModuleNum, C.PromTime as PromTime, D.startDate as startDate FROM D, (SELECT ModuleNum, CONCAT(CONCAT(D.startDate, ' ')  , EatTime) AS PromTime FROM PillMe.PillTime, D WHERE PillMaster = '"+user.userID+"') C WHERE C.PromTime = D.startDate) P WHERE T.ModuleNum = P.ModuleNum AND TIMESTAMPDIFF(minute, P.PromTime, T.PillTakeTime) <= 30 AND  T.PillTakeTime >= P.PromTime group by P.startDate"
+            strSql = "with recursive D as (select last_day(now() - interval 1 month) + interval 1 day as startDate union all select startDate + interval 1 day from D where startDate < last_day(now())) SELECT count(T.PillTakeTime) AS cnt, P.startDate FROM PillMe.PillTake AS T, ( SELECT C.ModuleNum as ModuleNum, C.PromTime as PromTime, D.startDate as startDate FROM D, (SELECT ModuleNum, CONCAT(CONCAT(D.startDate, ' ')  , EatTime) AS PromTime FROM PillMe.PillTime, D WHERE PillMaster = '"+friend.userID+"') C WHERE C.PromTime = D.startDate) P WHERE T.ModuleNum = P.ModuleNum AND TIMESTAMPDIFF(minute, P.PromTime, T.PillTakeTime) <= 30 AND  T.PillTakeTime >= P.PromTime group by P.startDate"
             result = cursor.execute(strSql)
             pillcalendar = cursor.fetchall()
 
@@ -209,7 +212,7 @@ def friendpill(request, username):
             print("success!!")
         except:
             print("failed")
-        return render(request, 'pybo/friendpill.html', {'user' : user, 'pillList' : pillList, 'pillcalDict' :  pillcalDict})
+        return render(request, 'pybo/friendpill.html', {'pillReminder': pillReminder, 'friend':friend, 'user' : user, 'pillList' : pillList, 'pillcalDict' :  pillcalDict})
     else:
         return render(request, 'pybo/friendpill.html')
 

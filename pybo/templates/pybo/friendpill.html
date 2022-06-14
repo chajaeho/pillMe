@@ -1,17 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
-<h4> {{user.userNAME}}님</h4>
+<h4> {{friend.userNAME}}님</h4>
 <a href="delete">삭제</a>
 {% if not pillList %}
 <h4> 약이 없습니다. </h4>
 {% else %}
 {% for pill in pillList.all %}
-<h1> {{user.userNAME}}님의 약 목록</h1>
+<h1> {{friend.userNAME}}님의 약 목록</h1>
     <p>{{pill.PillName}}</p>
 {% endfor %} 
-<h1> {{user.userNAME}}님의 복용 기록</h1>
+<h1> {{friend.userNAME}}님의 복용 기록</h1>
 
-{% url 'searchFriendPill' %}
+<p style="color:#6667AB;">{% url 'searchFriendPill' %}</p>
 
 <div class="calendarbody">
     <div class="calendar">
