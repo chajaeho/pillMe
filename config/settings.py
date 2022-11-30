@@ -19,7 +19,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
-API_SECRET_KEY = my_settings.API_SECRET_KEY
+# API_SECRET_KEY = my_settings.API_SECRET_KEY
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = my_settings.SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -27,9 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-SMS_ACCESS_KEY = my_settings.SMS_ACCESS_KEY
-SMS_SECRET_KEY = my_settings.SMS_SECRET_KEY
-SMS_SERVICE_ID = my_settings.SMS_SERVICE_ID
+# SMS_ACCESS_KEY = my_settings.SMS_ACCESS_KEY
+# SMS_SECRET_KEY = my_settings.SMS_SECRET_KEY
+# SMS_SERVICE_ID = my_settings.SMS_SERVICE_ID
 # Application definition
 
 INSTALLED_APPS = [
